@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
+const WorkboxPlugin = require('workbox-webpack-plugin');
 const bundleOutputDir = './wwwroot/dist';
 
 module.exports = (env) => {
@@ -38,6 +39,14 @@ module.exports = (env) => {
             // Plugins that apply in production builds only
             new webpack.optimize.UglifyJsPlugin(),
             new ExtractTextPlugin('site.css')
+        ])
+        .concat([
+            // must be run last
+            new WorkboxPlugin({
+                globDirectory: 'wwwroot',
+                globPatterns: ['**/*.{html,js,css}'],
+                swDest: path.join(bundleOutputDir, 'sw.js'),
+            })
         ])
     }];
 };
