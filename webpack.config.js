@@ -3,13 +3,24 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 const WorkboxPlugin = require('workbox-webpack-plugin');
-const bundleOutputDir = './wwwroot/dist';
+const bundleOutputDir = './wwwroot';
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
-    return [{
+    return [
+    {
+        entry: { 'dist/workbox-shim': './ClientApp/workbox-shim.js' },
+        output: {
+            path: path.join(__dirname, bundleOutputDir),
+            filename: '[name].js',
+            publicPath: 'dist/'
+        },
+        target: 'webworker',
+        module: {}
+    },
+    {
         stats: { modules: false },
-        entry: { 'main': './ClientApp/boot.tsx' },
+        entry: { 'dist/main': './ClientApp/boot.tsx' },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
         output: {
             path: path.join(__dirname, bundleOutputDir),
@@ -43,9 +54,10 @@ module.exports = (env) => {
         .concat([
             // must be run last
             new WorkboxPlugin({
-                globDirectory: 'wwwroot',
+                globDirectory: 'wwwroot/dist',
                 globPatterns: ['**/*.{html,js,css}'],
-                swDest: path.join(bundleOutputDir, 'sw.js'),
+                swSrc: './ClientApp/sw.js',
+                swDest: path.join(bundleOutputDir, 'dist/sw.js'),
             })
         ])
     }];
