@@ -4,21 +4,11 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CheckerPlugin = require('awesome-typescript-loader').CheckerPlugin;
 const WorkboxPlugin = require('workbox-webpack-plugin');
 const bundleOutputDir = './wwwroot/dist';
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = (env) => {
     const isDevBuild = !(env && env.prod);
-    return [
-    {
-        entry: { 'workbox-shim': './ClientApp/workbox-shim.js' },
-        output: {
-            path: path.join(__dirname, bundleOutputDir),
-            filename: '[name].js',
-            publicPath: 'dist/'
-        },
-        target: 'webworker',
-        module: {}
-    },
-    {
+    return [{
         stats: { modules: false },
         entry: { 'main': './ClientApp/boot.tsx' },
         resolve: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
@@ -35,6 +25,12 @@ module.exports = (env) => {
             ]
         },
         plugins: [
+            new CopyWebpackPlugin([
+                {
+                    from: require.resolve('workbox-sw'),
+                    to: './workbox-sw.js'
+                }
+            ]),
             new CheckerPlugin(),
             new webpack.DllReferencePlugin({
                 context: __dirname,
