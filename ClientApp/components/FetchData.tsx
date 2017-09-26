@@ -12,7 +12,7 @@ export class FetchData extends React.Component<RouteComponentProps<{}>, FetchDat
         super();
         this.state = { plugins: [], loading: true };
 
-        fetch('api/SampleData/DbQuery')
+        fetch('api/DbQuery')
             .then(response => response.json() as Promise<DbPlugin[]>)
             .then(data => {
                 this.setState({ plugins: data, loading: false });
