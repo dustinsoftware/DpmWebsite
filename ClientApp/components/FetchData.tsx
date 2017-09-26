@@ -3,61 +3,49 @@ import { RouteComponentProps } from 'react-router';
 import 'isomorphic-fetch';
 
 interface FetchDataExampleState {
-    forecasts: WeatherForecast[];
+    plugins: DbPlugin[];
     loading: boolean;
 }
 
 export class FetchData extends React.Component<RouteComponentProps<{}>, FetchDataExampleState> {
     constructor() {
         super();
-        this.state = { forecasts: [], loading: true };
+        this.state = { plugins: [], loading: true };
 
-        fetch('api/SampleData/WeatherForecasts')
-            .then(response => response.json() as Promise<WeatherForecast[]>)
+        fetch('api/SampleData/DbQuery')
+            .then(response => response.json() as Promise<DbPlugin[]>)
             .then(data => {
-                this.setState({ forecasts: data, loading: false });
+                this.setState({ plugins: data, loading: false });
             });
     }
 
     public render() {
-        let contents = this.state.loading
-            ? <p><em>Loading...</em></p>
-            : FetchData.renderForecastsTable(this.state.forecasts);
-
         return <div>
-            <h1>Online data fetch</h1>
+            <h1>What plugins are running on the DB server?</h1>
             <p>This code hits some C# logic on the server. It won't work if you are offline.</p>
-            { contents }
-        </div>;
-    }
-
-    private static renderForecastsTable(forecasts: WeatherForecast[]) {
-        return <table className='table'>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Temp. (C)</th>
-                    <th>Temp. (F)</th>
-                    <th>Summary</th>
-                </tr>
-            </thead>
-            <tbody>
-            {forecasts.map(forecast =>
-                <tr key={ forecast.dateFormatted }>
-                    <td>{ forecast.dateFormatted }</td>
-                    <td>{ forecast.temperatureC }</td>
-                    <td>{ forecast.temperatureF }</td>
-                    <td>{ forecast.summary }</td>
-                </tr>
+            { this.state.loading ? <p><em>Loading...</em></p> : (
+                <table className='table'>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {this.state.plugins.map(plugin =>
+                        <tr key={ plugin.name }>
+                            <td>{ plugin.name }</td>
+                            <td>{ plugin.description }</td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
             )}
-            </tbody>
-        </table>;
+        </div>
     }
 }
 
-interface WeatherForecast {
-    dateFormatted: string;
-    temperatureC: number;
-    temperatureF: number;
-    summary: string;
+interface DbPlugin {
+    name: string,
+    description: string,
 }
