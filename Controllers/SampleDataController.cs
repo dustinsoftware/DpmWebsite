@@ -23,7 +23,7 @@ namespace DpmWebsite.Controllers
         [HttpGet("log")]
         public object Visitors()
         {
-            _service.RecordVisit(HttpContext.Connection.RemoteIpAddress.ToString(), Request.Headers["User-Agent"]);
+            _service.RecordVisit(Request.Headers["X-Forwarded-For"], Request.Headers["User-Agent"]);
             return new { visitors = _service.GetVisitors() };
         }
 
