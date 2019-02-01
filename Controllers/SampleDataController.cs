@@ -1,4 +1,7 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DpmWebsite.Controllers
@@ -6,22 +9,15 @@ namespace DpmWebsite.Controllers
     [Route("api")]
     public class SampleDataController : Controller
     {
-        public SampleDataController(DpmService service, DpmGraphQLService dpmGraphQL)
+        public SampleDataController(DpmService service)
         {
             _service = service;
-            _dpmGraphQL = dpmGraphQL;
         }
 
-        [HttpGet("DbQuery")]
+        [HttpGet("[action]")]
         public IReadOnlyList<DbPlugin> DbQuery()
         {
             return _service.ShowPlugins();
-        }
-
-        [HttpGet("graphQL")]
-        public object GraphQL()
-        {
-            return _dpmGraphQL.GetHello();
         }
 
         [HttpGet("log")]
@@ -32,6 +28,5 @@ namespace DpmWebsite.Controllers
         }
 
         private readonly DpmService _service;
-        private readonly DpmGraphQLService _dpmGraphQL;
     }
 }

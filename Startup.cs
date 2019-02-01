@@ -28,7 +28,6 @@ namespace DpmWebsite
             services.AddMvc();
             services.AddTransient<IDbConnection, MySqlConnection>(_ => new MySqlConnection(Configuration.GetSection("App:Connection:Value").Value));
             services.AddTransient<DpmService>();
-            services.AddTransient<DpmGraphQLService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
